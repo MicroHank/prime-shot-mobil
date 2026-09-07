@@ -1,0 +1,829 @@
+/* =========================================================
+   Prime Split: Factorization Protocol - Mobile-First Styles
+   Optimized specifically for smartphones and mobile touchscreens
+   ========================================================= */
+
+:root {
+    --bg-dark: #07090e;
+    --panel-bg: rgba(15, 23, 42, 0.88);
+    --panel-border: rgba(0, 240, 255, 0.25);
+    --accent-cyan: #00f0ff;
+    --accent-green: #00ff88;
+    --accent-amber: #ffaa00;
+    --accent-violet: #b844ff;
+    --accent-pink: #ff2a85;
+    --danger-red: #ff0055;
+    --gold: #ffd700;
+    --font-display: 'Orbitron', 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 15%, #0e172e 0%, var(--bg-dark) 100%);
+    color: #e2e8f0;
+    font-family: var(--font-sans);
+    touch-action: manipulation;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Main Mobile Game Container (Simulates phone viewport frame, 100% on phones) */
+.mobile-game-app {
+    position: relative;
+    z-index: 1;
+    width: 100vw;
+    max-width: 480px;
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #07090e;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.1);
+}
+
+/* =========================================================
+   Top Mobile Header / Cyberpunk HUD
+   ========================================================= */
+.mobile-header {
+    flex-shrink: 0;
+    background: rgba(11, 18, 33, 0.95);
+    backdrop-filter: blur(14px);
+    border-bottom: 1.5px solid rgba(0, 240, 255, 0.25);
+    padding: 8px 10px 6px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 20;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+}
+
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.mobile-brand-title {
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    background: linear-gradient(135deg, #00f0ff 0%, #00ff88 60%, #b844ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+}
+
+.mobile-stage-badge {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.mobile-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.mobile-stat-lbl {
+    font-size: 0.52rem;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.mobile-stat-val {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.mobile-btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.mobile-btn-icon:hover, .mobile-btn-icon:active {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: var(--accent-cyan);
+    color: #fff;
+    transform: scale(0.95);
+}
+
+/* Stage Progress Bar (Arcade) */
+.mobile-progress-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.mobile-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.62rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.mobile-progress-track {
+    width: 100%;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 136, 0.25);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.mobile-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00f0ff, #00ff88);
+    box-shadow: 0 0 8px #00ff88;
+    transition: width 0.25s ease;
+}
+
+/* =========================================================
+   Center Main Game Area (Canvas Arena)
+   ========================================================= */
+.mobile-canvas-container {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #090e17;
+    overflow: hidden;
+    touch-action: none; /* Crucial for preventing browser gestures on canvas */
+}
+
+.arena-wrapper {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.arena-box {
+    position: relative;
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.arena-box canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+/* Versus Mode Layout */
+.vs-divider {
+    width: 32px;
+    min-width: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(5, 8, 15, 0.92);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    z-index: 5;
+}
+
+.vs-badge {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #ffd700;
+}
+
+.vs-score {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.vs-timer {
+    font-size: 0.58rem;
+    color: #ff0055;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.vs-alert {
+    font-size: 0.55rem;
+    color: #00ff88;
+    text-align: center;
+    line-height: 1.1;
+}
+
+/* =========================================================
+   Bottom Mobile Prime Dock (滑動質數選擇器)
+   ========================================================= */
+.mobile-prime-dock {
+    flex-shrink: 0;
+    background: rgba(11, 17, 32, 0.98);
+    backdrop-filter: blur(16px);
+    border-top: 1.5px solid rgba(0, 240, 255, 0.35);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)) 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 240, 255, 0.12);
+    z-index: 25;
+}
+
+/* Dock Header: Active Prime display + Smart Active Shortcuts */
+.dock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+}
+
+.dock-active-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1.5px solid var(--accent-cyan);
+    border-radius: 8px;
+    padding: 3px 8px;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dock-active-lbl {
+    font-size: 0.55rem;
+    color: #64748b;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dock-active-box {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.dock-prime-val {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 900;
+    color: var(--accent-cyan);
+    line-height: 1;
+}
+
+.dock-prime-name {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    line-height: 1;
+}
+
+.dock-quick-section {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.dock-quick-section::-webkit-scrollbar {
+    display: none;
+}
+
+.dock-quick-title {
+    font-size: 0.58rem;
+    color: #94a3b8;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dock-quick-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.quick-pill-btn {
+    min-width: 32px;
+    height: 30px;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.88);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.quick-pill-btn:active {
+    transform: scale(0.92);
+}
+
+.quick-pill-btn.active {
+    background: rgba(0, 240, 255, 0.25);
+    border-color: var(--accent-cyan) !important;
+    box-shadow: 0 0 10px var(--accent-cyan);
+    transform: scale(1.08);
+}
+
+/* Horizontal Swipe Prime Track */
+.dock-swipe-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+.dock-step-btn {
+    width: 34px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(0, 240, 255, 0.4);
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--accent-cyan);
+    font-size: 0.85rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+}
+
+.dock-step-btn:active {
+    background: var(--accent-cyan);
+    color: #000;
+    transform: scale(0.92);
+}
+
+.dock-swipe-track-container {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    touch-action: pan-x;
+    padding: 2px 2px;
+}
+
+.dock-swipe-track-container::-webkit-scrollbar {
+    display: none;
+}
+
+.dock-swipe-track {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: max-content;
+    padding: 0 4px;
+}
+
+.prime-pill-btn {
+    min-width: 44px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.prime-pill-btn:active {
+    transform: scale(0.95);
+}
+
+.prime-pill-btn.active {
+    transform: scale(1.12);
+    border-color: var(--accent-cyan) !important;
+    background: rgba(0, 240, 255, 0.28) !important;
+    box-shadow: 0 0 16px var(--accent-cyan), inset 0 0 8px rgba(0, 240, 255, 0.35);
+    z-index: 2;
+}
+
+.dock-swipe-hint {
+    font-size: 0.58rem;
+    color: #475569;
+    text-align: center;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* =========================================================
+   Modals & Overlays (Mobile-Optimized)
+   ========================================================= */
+.game-modal {
+    display: none;
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 360px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.game-modal .modal-content {
+    background: rgba(11, 18, 33, 0.96);
+    backdrop-filter: blur(18px);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.3);
+    animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.modal-message {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-modal {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+.btn-modal-primary {
+    background: linear-gradient(135deg, #00f0ff, #00ff88);
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+.btn-modal-primary:active {
+    transform: scale(0.96);
+}
+
+.btn-modal-accent {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.btn-modal-accent:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hidden Utility */
+.hidden,
+#mode-select-modal.hidden,
+.mode-select-overlay.hidden {
+    display: none !important;
+}
+
+/* Mode Selection Overlay */
+.mode-select-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(7, 9, 14, 0.92);
+    backdrop-filter: blur(12px);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.mode-select-modal-content {
+    background: rgba(15, 23, 42, 0.96);
+    border: 1.5px solid rgba(0, 240, 255, 0.35);
+    border-radius: 18px;
+    padding: 18px 14px;
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.2);
+}
+
+.mode-select-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cyber-badge-sub {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    letter-spacing: 1.5px;
+}
+
+.mode-select-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #fff;
+}
+
+.mode-select-desc {
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.mode-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.mode-card {
+    background: rgba(11, 18, 33, 0.85);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.mode-card:active {
+    border-color: var(--accent-cyan);
+    background: rgba(15, 23, 42, 0.95);
+    transform: scale(0.98);
+}
+
+.mode-card-badge {
+    align-self: flex-start;
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: rgba(0, 240, 255, 0.15);
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.mode-card.featured .mode-card-badge {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.mode-card-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.mode-card-info {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    line-height: 1.35;
+}
+
+.card-difficulty-select {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    padding: 6px;
+    margin-top: 4px;
+}
+
+.card-diff-title {
+    font-size: 0.65rem;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+
+.diff-btn-group {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+}
+
+.diff-btn {
+    flex: 1;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 2px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    touch-action: manipulation;
+}
+
+.diff-btn.active[data-diff="easy"] {
+    background: rgba(0, 255, 136, 0.25);
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.diff-btn.active[data-diff="normal"] {
+    background: rgba(255, 215, 0, 0.25);
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.diff-btn.active[data-diff="hard"] {
+    background: rgba(255, 0, 85, 0.25);
+    border-color: #ff0055;
+    color: #ff0055;
+}
+
+.btn-mode-card {
+    width: 100%;
+    height: 38px;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 8px;
+    border: 1px solid var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.15);
+    color: var(--accent-cyan);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+    touch-action: manipulation;
+}
+
+.btn-mode-card:active {
+    background: var(--accent-cyan);
+    color: #000;
+}
+
+.btn-mode-card.btn-glow {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+.btn-mode-card.btn-glow:active {
+    background: #ffd700;
+    color: #000;
+}
+
+.blitz-glow {
+    animation: blitzPulse 1s infinite alternate;
+}
+
+@keyframes blitzPulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; text-shadow: 0 0 12px #00f0ff; }
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>質數裂變：因數分解防衛戰 (Prime Split: Factorization Protocol)</title>
+    <meta name="description" content="專屬智慧型手機行動裝置的 2D 質數蜂巢陣列射擊遊戲。滑動選擇 2~97 質數進行因數分解防衛！">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="mobile-game-app">
+    <!-- Top Cyberpunk Mobile HUD -->
+    <header class="mobile-header">
+        <div class="mobile-header-top">
+            <div class="mobile-brand">
+                <span class="mobile-brand-title">PRIME SPLIT</span>
+                <span id="stage-stat-item" class="mobile-stage-badge">STAGE <b id="stage-val">1</b></span>
+            </div>
+
+            <!-- Real-time Combat Stats -->
+            <div class="mobile-stats">
+                <div class="mobile-stat-box">
+                    <span class="mobile-stat-lbl">SCORE</span>
+                    <span id="score-val" class="mobile-stat-val">0</span>
+                </div>
+                <div class="mobile-stat-box" id="combo-stat-box">
+                    <span class="mobile-stat-lbl">COMBO</span>
+                    <span id="combo-val" class="mobile-stat-val" style="color: #00ff88;">x0</span>
+                </div>
+                <div class="mobile-stat-box" id="blitz-timer-stat-item" style="display: none;">
+                    <span class="mobile-stat-lbl">TIME</span>
+                    <span id="blitz-timer-val" class="mobile-stat-val blitz-glow" style="color: #00f0ff;">60.0s</span>
+                </div>
+                <!-- Hidden High Score for state tracking -->
+                <span id="high-score-val" style="display: none;">0</span>
+            </div>
+
+            <!-- Quick Action Icons -->
+            <div class="mobile-actions">
+                <button id="btn-choose-mode" class="mobile-btn-icon" title="切換遊戲模式">🎮</button>
+                <button id="btn-audio" class="mobile-btn-icon" title="音樂與音效開關">🔊</button>
+                <button id="btn-restart" class="mobile-btn-icon" title="重新開始">🔄</button>
+            </div>
+        </div>
+
+        <!-- Arcade Mode: Stage Progress Bar -->
+        <div id="stage-progress-box" class="mobile-progress-wrap">
+            <div class="mobile-progress-label">
+                <span>關卡突破目標</span>
+                <span id="stage-progress-val">0 / 8</span>
+            </div>
+            <div class="mobile-progress-track">
+                <div id="stage-progress-bar" class="mobile-progress-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <!-- Hidden Compatibility Elements for JS Tabs & Difficulty -->
+        <div id="vs-difficulty-panel" style="display: none;">
+            <div class="diff-btn-group sidebar-diff-group">
+                <button type="button" class="diff-btn" data-diff="easy">🟢 簡單</button>
+                <button type="button" class="diff-btn active" data-diff="normal">🟡 普通</button>
+                <button type="button" class="diff-btn" data-diff="hard">🔴 困難</button>
+            </div>
+        </div>
+        <div style="display: none;">
+            <nav class="mode-tabs">
+                <button class="mode-tab active" data-mode="arcade">🛡️ 無盡防守</button>
+                <button class="mode-tab" data-mode="blitz">⏱️ 60秒競速</button>
+                <button class="mode-tab" data-mode="vs">🤖 對戰 (VS)</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Center Main Game Area (Canvas Playfield) -->
+    <main id="canvas-container" class="mobile-canvas-container">
+        <div class="arena-wrapper">
+            <!-- Player Arena -->
+            <div id="player-arena-box" class="arena-box player">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <!-- Versus Divider & Real-time Combat Meter -->
+            <div id="vs-arena-divider" class="vs-divider" style="display: none;">
+                <div class="vs-badge">VS</div>
+                <div id="vs-round-score" class="vs-score">0 : 0</div>
+                <div id="vs-sudden-death-timer" class="vs-timer" title="每 10 秒雙方強制增加一排！">⏱️ 10s</div>
+                <div id="vs-attack-msg" class="vs-alert"></div>
+            </div>
+
+            <!-- Computer AI Arena -->
+            <div id="ai-arena-box" class="arena-box ai" style="display: none;">
+                <canvas id="aiCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Game Result Card Modal -->
+        <div id="game-modal" class="game-modal">
+            <div class="modal-content">
+                <h2 id="modal-title" class="modal-title">GAME OVER</h2>
+                <p id="modal-message" class="modal-message">防線遭到突破！</p>
+                <div id="modal-stats-container" class="modal-extra-stats" style="display: none;"></div>
+                <div class="modal-actions">
+                    <button id="modal-btn-retry" class="btn-modal btn-modal-primary">再次挑戰</button>
+                    <button id="modal-btn-change-mode" class="btn-modal btn-modal-accent" title="返回模式選擇">🎮 選擇模式</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Initial Mode Selection Welcome Modal -->
+        <div id="mode-select-modal" class="mode-select-overlay">
+            <div class="mode-select-modal-content">
+                <div class="mode-select-header">
+                    <div class="cyber-badge-sub">PROTOCOL ACTIVATION</div>
+                    <h2 class="mode-select-title">PRIME SPLIT 質數裂變</h2>
+                    <p class="mode-select-desc">發射 2~97 質數子彈進行因數分解防衛！</p>
+                </div>
+
+                <div class="mode-cards-grid">
+                    <!-- Mode Card 1: Arcade Endless -->
+                    <div class="mode-card" data-mode="arcade">
+                        <div class="mode-card-badge">SURVIVAL</div>
+                        <div class="mode-card-icon">🛡️</div>
+                        <h3 class="mode-card-title">無盡防守模式</h3>
+                        <p class="mode-card-info">蜂巢逐步逼近防線，升級因數難度與道具，達成關卡目標或全清盤面即可晉級！</p>
+                        <button type="button" class="btn-mode-card">啟動無盡防守</button>
+                    </div>
+
+                    <!-- Mode Card 2: Blitz 60s -->
+                    <div class="mode-card featured" data-mode="blitz">
+                        <div class="mode-card-badge">TIME ATTACK</div>
+                        <div class="mode-card-icon">⏱️</div>
+                        <h3 class="mode-card-title">60秒極限競速</h3>
+                        <p class="mode-card-info">60 秒倒數狂潮！無限補給、高倍率連鎖裂變，考驗心算手速極限！</p>
+                        <button type="button" class="btn-mode-card btn-glow">進入 60s 競速</button>
+                    </div>
+
+                    <!-- Mode Card 3: Versus AI Duel -->
+                    <div class="mode-card" data-mode="vs">
+                        <div class="mode-card-badge">VS DUEL</div>
+                        <div class="mode-card-icon">🤖</div>
+                        <h3 class="mode-card-title">對戰模式 (VS AI)</h3>
+                        <p class="mode-card-info">雙向即時對抗！因數分解連擊與全清壓制生成干擾泡泡！擊潰 CPU 贏得勝利。</p>
+                        
+                        <!-- AI Difficulty Chooser inside Card -->
+                        <div class="card-difficulty-select" onclick="event.stopPropagation();">
+                            <span class="card-diff-title">AI 難度等級：</span>
+                            <div class="diff-btn-group modal-diff-group">
+                                <button type="button" class="diff-btn" data-diff="easy">🟢 簡單</button>
+                                <button type="button" class="diff-btn active" data-diff="normal">🟡 普通</button>
+                                <button type="button" class="diff-btn" data-diff="hard">🔴 困難</button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-mode-card">啟動 AI 對戰</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Mobile Prime Dock (手機專屬滑動質數選擇器) -->
+    <footer class="mobile-prime-dock">
+        <!-- Dock Status Header: Active Prime display + Smart Active Shortcuts -->
+        <div class="dock-header">
+            <div class="dock-active-indicator" id="dock-active-indicator">
+                <span class="dock-active-lbl">當前裝填</span>
+                <div class="dock-active-box">
+                    <span class="dock-prime-val" id="dock-prime-val">2</span>
+                    <span class="dock-prime-name" id="dock-prime-name">青藍</span>
+                </div>
+            </div>
+
+            <!-- Smart Active / Common Primes Shortcut Row -->
+            <div class="dock-quick-section">
+                <span class="dock-quick-title">⚡ 活躍推薦</span>
+                <div class="dock-quick-row" id="dock-quick-row">
+                    <!-- Populated dynamically with 2, 3, 5, 7 + active board factors -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Horizontal Swipe Prime Track with Steppers -->
+        <div class="dock-swipe-wrapper">
+            <button id="btn-prime-prev" class="dock-step-btn" title="上一個質數" aria-label="上一個質數">◄</button>
+            <div class="dock-swipe-track-container" id="dock-swipe-track-container">
+                <div id="prime-dock-tiers" class="dock-swipe-track">
+                    <!-- Populated by JS with all 25 primes (2 to 97) -->
+                </div>
+            </div>
+            <button id="btn-prime-next" class="dock-step-btn" title="下一個質數" aria-label="下一個質數">►</button>
+        </div>
+        <div class="dock-swipe-hint">👈 左右滑動快速選號 (2 ~ 97) 👉</div>
+    </footer>
+</div>
+
+<!-- Game Scripts (ES Modules) -->
+<script type="module" src="js/game.js"></script>
+
+</body>
+</html>
