@@ -128,7 +128,7 @@ class GameEngine {
                 this.maxRows = 14;
 
                 if (this.aiController) {
-                    this.aiController.setSize(Math.max(160, aiWidth), this.height);
+                    this.aiController.setSize(Math.max(160, aiWidth), this.height, this.bubbleRadius);
                 }
             } else {
                 this.width = availableWidth;

@@ -15,9 +15,9 @@ export class AIController {
         this.width = canvas.width || 340;
         this.height = canvas.height || 750;
 
-        this.bubbleRadius = 27; // Accommodates 5 bubbles across ~330px width
+        this.bubbleRadius = 20;
         this.maxRows = 14;
-        this.maxCols = 5;
+        this.maxCols = 4;
 
         // =========================================================================
         // 🎯 AI 電腦數值與行為設定 (支援 簡單 / 普通 / 困難 三種難度)
@@ -102,17 +102,17 @@ export class AIController {
         this.accuracy = Math.max(0, Math.min(1.0, Number(val) || 0));
     }
 
-    setSize(width, height) {
+    setSize(width, height, bubbleRadius = null) {
         this.width = width;
         this.height = height;
         this.canvas.width = width;
         this.canvas.height = height;
         this.turretX = width / 2;
-        this.turretY = height - 75;
-        this.dangerLineY = height - 128;
-        this.bubbleRadius = 27;
+        this.turretY = height - 42;
+        this.dangerLineY = height - 92;
+        this.bubbleRadius = bubbleRadius || Math.min(22, Math.max(16, Math.floor(width / 8)));
         this.maxRows = 14;
-        this.maxCols = Math.min(5, Math.max(4, Math.floor(width / (this.bubbleRadius * 2))));
+        this.maxCols = Math.min(4, Math.max(3, Math.floor(width / (this.bubbleRadius * 2))));
         this.lastAttackTime = Date.now();
     }
 
